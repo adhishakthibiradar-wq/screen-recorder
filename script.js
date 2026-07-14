@@ -8,6 +8,8 @@ const stopBtn = document.getElementById("stopBtn");
 
 const preview = document.getElementById("preview");
 const downloadLink = document.getElementById("downloadLink");
+const status = document.getElementById("status");
+const timer = document.getElementById("timer");
 
 // ===============================
 // Variables
@@ -19,9 +21,59 @@ let combinedStream;
 let mediaRecorder;
 let recordedChunks = [];
 
+let seconds = 0;
+let timerInterval;
+
 // ===============================
 // Start Recording
 // ===============================
+function startTimer() {
+
+    timerInterval = setInterval(() => {
+
+        seconds++;
+
+        const mins = String(Math.floor(seconds / 60)).padStart(2,"0");
+        const secs = String(seconds % 60).padStart(2,"0");
+
+        timer.textContent = `${mins}:${secs}`;
+
+    },1000);
+
+}
+
+function stopTimer(){
+
+    clearInterval(timerInterval);
+
+}
+function stopRecording() {
+
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+    }
+
+    if (screenStream) {
+        screenStream.getTracks().forEach(track => track.stop());
+    }
+
+    if (micStream) {
+        micStream.getTracks().forEach(track => track.stop());
+    }
+
+    stopTimer();
+    seconds = 0;
+
+    status.textContent = "⚫ Ready";
+    timer.textContent = "00:00";
+
+    startBtn.disabled = false;
+    pauseBtn.disabled = true;
+    resumeBtn.disabled = true;
+    stopBtn.disabled = true;
+
+}
+
 startBtn.addEventListener("click", async () => {
     try {
 
@@ -41,6 +93,11 @@ startBtn.addEventListener("click", async () => {
             ...screenStream.getVideoTracks(),
             ...micStream.getAudioTracks()
         ]);
+
+        // Auto Stop When Screen Sharing Ends
+        screenStream.getVideoTracks()[0].addEventListener("ended", () => {
+            stopRecording();
+        });
 
         // Live Preview
         preview.srcObject = combinedStream;
@@ -84,6 +141,8 @@ startBtn.addEventListener("click", async () => {
 
         // Start Recording
         mediaRecorder.start();
+        startTimer();
+        status.textContent = "🔴 Recording";
 
         // Button States
         startBtn.disabled = true;
@@ -107,6 +166,9 @@ pauseBtn.addEventListener("click", () => {
 
         mediaRecorder.pause();
 
+        stopTimer();
+    status.textContent = "🟡 Paused";
+
         pauseBtn.disabled = true;
         resumeBtn.disabled = false;
 
@@ -123,6 +185,8 @@ resumeBtn.addEventListener("click", () => {
     if (mediaRecorder && mediaRecorder.state === "paused") {
 
         mediaRecorder.resume();
+        startTimer();
+status.textContent = "🔴 Recording";
 
         pauseBtn.disabled = false;
         resumeBtn.disabled = true;
@@ -135,27 +199,12 @@ resumeBtn.addEventListener("click", () => {
 // ===============================
 // Stop Recording
 // ===============================
+// ===============================
+// Stop Recording
+// ===============================
 stopBtn.addEventListener("click", () => {
 
-    if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-    }
-
-    // Stop Screen Sharing
-    if (screenStream) {
-        screenStream.getTracks().forEach(track => track.stop());
-    }
-
-    // Stop Microphone
-    if (micStream) {
-        micStream.getTracks().forEach(track => track.stop());
-    }
-
-    // Reset Buttons
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
-    resumeBtn.disabled = true;
-    stopBtn.disabled = true;
+    stopRecording();
 
     console.log("Recording Stopped");
 
