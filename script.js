@@ -162,17 +162,19 @@ startBtn.addEventListener("click", async () => {
 // ===============================
 pauseBtn.addEventListener("click", () => {
 
+    console.log("Before Pause:", mediaRecorder.state);
+
     if (mediaRecorder && mediaRecorder.state === "recording") {
 
         mediaRecorder.pause();
 
+        console.log("After Pause:", mediaRecorder.state);
+
         stopTimer();
-    status.textContent = "🟡 Paused";
+        status.textContent = "🟡 Paused";
 
         pauseBtn.disabled = true;
         resumeBtn.disabled = false;
-
-        console.log("Recording Paused");
     }
 
 });
@@ -182,23 +184,24 @@ pauseBtn.addEventListener("click", () => {
 // ===============================
 resumeBtn.addEventListener("click", () => {
 
+    console.log("Before Resume:", mediaRecorder.state);
+
     if (mediaRecorder && mediaRecorder.state === "paused") {
 
         mediaRecorder.resume();
+
+        console.log("After Resume:", mediaRecorder.state);
+
         startTimer();
-status.textContent = "🔴 Recording";
+        status.textContent = "🔴 Recording";
 
         pauseBtn.disabled = false;
         resumeBtn.disabled = true;
-
-        console.log("Recording Resumed");
     }
 
 });
 
-// ===============================
-// Stop Recording
-// ===============================
+
 // ===============================
 // Stop Recording
 // ===============================
