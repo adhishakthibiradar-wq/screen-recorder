@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome Screen Recorder</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>🎥 Chrome Screen Recorder</h1>
+
+        <div class="buttons">
+
+            <button id="startBtn">
+                Start Recording
+            </button>
+
+            <button id="pauseBtn" disabled>
+                Pause
+            </button>
+
+            <button id="resumeBtn" disabled>
+                Resume
+            </button>
+
+            <button id="stopBtn" disabled>
+                Stop
+            </button>
+
+        </div>
+
+        <h3>Recording Preview</h3>
+
+        <video
+            id="preview"
+            controls
+        ></video>
+
+        <a
+            id="downloadLink"
+            style="display:none;"
+        >
+            Download Recording
+        </a>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
